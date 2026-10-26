@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="csrf-token" content="<%= csrf %>" />
+  <title>CRUD - CyberNews</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>Administración de noticias</h1>
+        <p class="subtitle">Usuario: <%= user.username %> · Rol: <%= user.role %></p>
+      </div>
+      <nav class="menu" aria-label="Menú del dashboard">
+        <a class="btn btn-secondary" href="/">Ver sitio</a>
+        <form method="POST" action="/logout" class="inline-form">
+          <input type="hidden" name="csrf" value="<%= csrf %>" />
+          <button class="btn btn-secondary" type="submit">Cerrar sesión</button>
+        </form>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap crud-layout">
+    <section class="section panel">
+      <h2 id="formTitle">Crear noticia</h2>
+      <p class="hint">El mismo formulario usa <code>POST</code> para crear y <code>PATCH</code> para actualizar.</p>
+
+      <form id="newsForm">
+        <input id="newsId" type="hidden" />
+
+        <label class="label" for="title">Título</label>
+        <input id="title" class="input" required minlength="5" maxlength="120" />
+
+        <label class="label" for="summary">Resumen</label>
+        <textarea id="summary" class="input textarea" required minlength="10" maxlength="500"></textarea>
+
+        <div class="form-grid">
+          <div>
+            <label class="label" for="severity">Severidad</label>
+            <select id="severity" class="input" required>
+              <option value="low">Baja</option>
+              <option value="medium">Media</option>
+              <option value="high">Alta</option>
+              <option value="critical">Crítica</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" for="date">Fecha</label>
+            <input id="date" class="input" type="date" required />
+          </div>
+        </div>
+
+        <label class="label" for="source">Fuente</label>
+        <input id="source" class="input" required maxlength="80" />
+
+        <label class="label" for="url">URL HTTP/HTTPS</label>
+        <input id="url" class="input" type="url" required maxlength="500" />
+
+        <label class="label" for="tags">Tags separados por coma</label>
+        <input id="tags" class="input" required maxlength="200" placeholder="xss, devsecops" />
+
+        <div class="actions">
+          <button id="submitButton" class="btn" type="submit">Crear noticia</button>
+          <button id="cancelEdit" class="btn btn-secondary" type="button" hidden>Cancelar edición</button>
+        </div>
+      </form>
+
+      <p id="status" class="status" aria-live="polite"></p>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <div>
+          <h2>Noticias actuales</h2>
+          <p class="hint">Editar usa <code>PATCH</code>; eliminar usa <code>DELETE</code>.</p>
+        </div>
+        <button id="refreshNews" class="btn btn-secondary" type="button">Recargar</button>
+      </div>
+      <div id="adminNews" class="admin-list"></div>
+    </section>
+  </main>
+
+  <script src="/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CyberNews - Seguridad y CRUD</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="wrap">
+    <div class="topbar">
+      <div>
+        <h1>CyberNews</h1>
+        <p class="subtitle">Node.js + seguridad + CRUD</p>
+        <div class="badges">
+          <span class="badge">Express</span>
+          <span class="badge">REST</span>
+          <span class="badge">Security</span>
+        </div>
+      </div>
+
+      <nav class="menu" aria-label="Menú principal">
+        <% if (user) { %>
+          <a class="btn" href="/dashboard">Administrar noticias</a>
+          <form method="POST" action="/logout" class="inline-form">
+            <input type="hidden" name="csrf" value="<%= csrf %>" />
+            <button class="btn btn-secondary" type="submit">Cerrar sesión</button>
+          </form>
+        <% } else { %>
+          <a class="btn" href="/login">Iniciar sesión</a>
+        <% } %>
+      </nav>
+    </div>
+
+    <div class="panel filters">
+      <div>
+        <label class="label" for="q">Buscar</label>
+        <input id="q" class="input" maxlength="80" placeholder="phishing, ransomware, XSS..." />
+      </div>
+      <div>
+        <label class="label" for="sev">Severidad</label>
+        <select id="sev" class="input">
+          <option value="">Todas</option>
+          <option value="critical">Crítica</option>
+          <option value="high">Alta</option>
+          <option value="medium">Media</option>
+          <option value="low">Baja</option>
+        </select>
+      </div>
+      <div>
+        <label class="label" for="tag">Tag</label>
+        <select id="tag" class="input">
+          <option value="">Todos</option>
+          <option value="phishing">phishing</option>
+          <option value="ransomware">ransomware</option>
+          <option value="xss">xss</option>
+          <option value="devsecops">devsecops</option>
+          <option value="patching">patching</option>
+        </select>
+      </div>
+      <button id="btnReset" class="btn btn-secondary" type="button">Limpiar filtros</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="section">
+      <div class="section-head">
+        <h2>Últimas noticias</h2>
+        <p id="count" class="count"></p>
+      </div>
+
+      <div id="newsGrid" class="grid">
+        <% news.forEach(item => { %>
+          <article class="card"
+            data-title="<%= item.title %>"
+            data-summary="<%= item.summary %>"
+            data-severity="<%= item.severity %>"
+            data-tags="<%= item.tags.join(',') %>">
+            <div class="card-top">
+              <span class="sev sev-<%= item.severity %>"><%= item.severity.toUpperCase() %></span>
+              <span class="date"><%= item.date %></span>
+            </div>
+            <h3 class="card-title"><%= item.title %></h3>
+            <p class="card-summary"><%= item.summary %></p>
+            <div class="tags">
+              <% item.tags.forEach(tag => { %>
+                <span class="tag"><%= tag %></span>
+              <% }) %>
+            </div>
+            <div class="card-foot">
+              <span class="source"><%= item.source %></span>
+              <a class="link" href="<%= item.url %>" target="_blank" rel="noopener noreferrer">Ver más</a>
+            </div>
+          </article>
+        <% }) %>
+      </div>
+    </section>
+
+    <section class="section panel">
+      <h2>API de la práctica</h2>
+      <ul class="api-list">
+        <li><code>GET /api/news</code>: leer noticias.</li>
+        <li><code>POST /api/news</code>: crear, requiere sesión admin y CSRF.</li>
+        <li><code>PATCH /api/news/:id</code>: actualizar, requiere sesión admin y CSRF.</li>
+        <li><code>DELETE /api/news/:id</code>: eliminar, requiere sesión admin y CSRF.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="wrap footer">
+    <p>Práctica educativa. Los cambios CRUD se guardan en memoria y se restauran al reiniciar Node.</p>
+  </footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

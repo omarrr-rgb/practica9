@@ -1,0 +1,44 @@
+name: 02 - CI y seguridad de CyberNews
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Preparar pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          package-manager-cache: false
+
+      - name: Instalar desde el archivo de bloqueo
+        run: pnpm install --frozen-lockfile
+
+      - name: Comprobar sintaxis
+        run: pnpm run check
+
+      - name: Probar comportamiento HTTP
+        run: pnpm test
+
+      - name: Revisar vulnerabilidades altas o críticas
+        run: pnpm audit --audit-level high
