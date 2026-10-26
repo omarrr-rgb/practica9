@@ -23,6 +23,6 @@ test("CyberNews responde y aplica controles básicos", async t => {
   assert.ok(Array.isArray(news.data), "la API debe devolver un arreglo de noticias");
 
   const dashboard = await fetch(`${base}/dashboard`, { redirect: "manual" });
-  assert.equal(dashboard.status, 200, "el dashboard sin sesión debe redirigir");
+  assert.equal(dashboard.status, 302, "el dashboard sin sesión debe redirigir");
   assert.equal(dashboard.headers.get("location"), "/login");
 });
